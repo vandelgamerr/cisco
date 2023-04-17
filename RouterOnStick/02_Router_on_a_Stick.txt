@@ -1,0 +1,150 @@
+####################################################################
+# Description: Configuracion basica de Router on a Stick empleando #
+# redes con CIDR /28                                               #
+# Author: Jesus Delgado Mercado.                                   #
+# Email: jesus.delgado.mercado@gmail.com                           #
+####################################################################
+
+# Configuracion Switch 
+-- Evitar que los switches Cisco traduzcan los nombres de dominio de los servidores
+Switch(config)#no ip domain-lookup
+
+-- Configurar nombre del equipo
+Switch(config)#hostname S1
+
+-- Crea VLAN's
+S1(config)#vlan 101
+S1(config-vlan)#name 101
+S1(config-vlan)#exit
+
+S1(config)#vlan 102
+S1(config-vlan)#name 102
+S1(config-vlan)#exit
+
+S1(config)#vlan 103
+S1(config-vlan)#name 103
+S1(config-vlan)#exit
+
+S1(config)#vlan 104
+S1(config-vlan)#name 104
+S1(config-vlan)#exit
+S1(config)#end
+S1#write memory
+
+-- Asignar puertos a vlans
+S1(config)#interface fastEthernet 0/1
+S1(config-if)#switchport mode access
+S1(config-if)#switchport access vlan 101
+S1(config-if)#exit
+
+S1(config)#interface fastEthernet 0/2
+S1(config-if)#switchport mode access
+S1(config-if)#switchport access vlan 102
+S1(config-if)#exit
+
+S1(config)#interface fastEthernet 0/3
+S1(config-if)#switchport mode access
+S1(config-if)#switchport access vlan 103
+S1(config-if)#exit
+
+S1(config)#interface fastEthernet 0/4
+S1(config-if)#switchport mode access
+S1(config-if)#switchport access vlan 104
+S1(config-if)#exit
+S1(config)#end
+S1#write memory
+
+-- Configurar velocidad de puertos
+S1(config)#interface range fastEthernet 0/1 - 4
+S1(config-if)#speed 100
+S1(config-if)#duplex full
+S1(config-if)#no shutdown
+S1(config-if)#exit
+S1(config)#end
+S1#write memory
+
+-- Crear Troncal
+S1(config-if)# interface gigabitEthernet 0/1
+S1(config-if)# description Trunk-to-Router
+S1(config-if)# switchport mode trunk
+S1(config-if)# switchport nonegotiate
+S1(config-if)# switchport trunk allowed vlan 101,102,103,104
+S1(config-if)# no shutdown
+S1(config)#end
+S1#write memory
+
+# Configuracion Ruteador
+-- Evitar que los ruteadores Cisco traduzcan los nombres de dominio de los servidores
+Router(config)#no ip domain-lookup
+
+-- Configurar nombre del equipo
+R1(config)#hostname R1
+
+-- Encender la interface
+R1(config)# interface gigabitEthernet 0/1
+R1(config-if)#no shutdown
+
+-- Configuracion Subinterfaces
+R1(config)# interface gigabitEthernet 0/1.101
+R1(config-if)# description Default Gateway for VLAN 101
+R1(config-if)# encapsulation dot1Q 101
+R1(config-if)# ip address 192.168.0.14 255.255.255.240
+R1(config-if)# exit
+
+R1(config)# interface gigabitEthernet 0/1.102
+R1(config-if)# description Default Gateway for VLAN 102
+R1(config-if)# encapsulation dot1Q 102
+R1(config-if)# ip address 192.168.0.30 255.255.255.240
+R1(config-if)# exit
+
+R1(config)# interface gigabitEthernet 0/1.103
+R1(config-if)# description Default Gateway for VLAN 103
+R1(config-if)# encapsulation dot1Q 103
+R1(config-if)# ip address 192.168.0.46 255.255.255.240
+R1(config-if)# exit
+
+R1(config)# interface gigabitEthernet 0/1.104
+R1(config-if)# description Default Gateway for VLAN 104
+R1(config-if)# encapsulation dot1Q 104
+R1(config-if)# ip address 192.168.0.62 255.255.255.240
+R1(config-if)# exit
+
+# Configuracion PC's
+-- PC1
+IP: 192.168.0.1
+Mask: 255.255.255.240
+GW: 192.168.0.14
+
+-- PC2
+IP: 192.168.0.17
+Mask: 255.255.255.240
+GW: 192.168.0.30
+
+-- PC3
+IP: 192.168.0.33
+Mask: 255.255.255.240
+GW: 192.168.0.46
+
+-- Server
+IP: 192.168.0.49
+Mask: 255.255.255.240
+GW: 192.168.0.62
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
