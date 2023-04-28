@@ -1,0 +1,110 @@
+####################################################################
+# Description: Configuracion ruta estatica flotante                #                                               #
+# Author: Jesus Delgado Mercado.                                   #
+# Email: jesus.delgado.mercado@gmail.com                           #
+####################################################################
+
+# Configuracion Ruteador 1
+-- Evitar que los ruteadores Cisco traduzcan los nombres de dominio de los servidores
+Router(config)#no ip domain-lookup
+
+-- Configurar nombre del equipo
+R1(config)#hostname R1
+
+-- Encender la interface
+R1(config)# interface gigabitEthernet 0/1
+
+# Configuracion Ruteador
+-- Ruteador 1
+-- Evitar que los ruteadores Cisco traduzcan los nombres de dominio de los servidores
+Router(config)#no ip domain-lookup
+
+-- Configurar nombre del equipo
+Router(config)#hostname R1
+
+-- Encender la interface
+R1(config)#interface gigabitEthernet 0/0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+
+R1(config)#interface gigabitEthernet 0/1
+R1(config-if)#no shutdown
+R1(config-if)#exit
+
+R1(config)# interface gigabitEthernet 0/2
+R1(config-if)#no shutdown
+R1(config-if)#exit
+
+-- Asignar IP a Interfaces
+R1(config)#interface gigabitEthernet 0/0
+R1(config-if)#ip address 10.74.15.254 255.255.255.0
+R1(config-if)#exit
+
+R1(config)#interface gigabitEthernet 0/1
+R1(config-if)#ip address 10.250.0.9 255.255.255.252
+R1(config-if)#exit
+
+R1(config)#interface gigabitEthernet 0/2
+R1(config-if)#ip address 10.250.0.17 255.255.255.252
+R1(config-if)#exit
+
+-- Asignar Rutas Estaticas
+R1(config)# ip route 192.168.1.0 255.255.255.0 10.250.0.10 
+R1(config)# ip route 192.168.1.0 255.255.255.0 10.250.0.18 2
+R2(config)#exit
+R2#write memory
+
+# Configuracion Ruteador 2
+-- Evitar que los ruteadores Cisco traduzcan los nombres de dominio de los servidores
+Router(config)#no ip domain-lookup
+
+-- Configurar nombre del equipo
+Router(config)#hostname R2
+
+-- Encender la interface
+R2(config)#interface gigabitEthernet 0/0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+
+R2(config)#interface gigabitEthernet 0/1
+R2(config-if)#no shutdown
+R2(config-if)#exit
+
+R2(config)#interface gigabitEthernet 0/2
+R2(config-if)#no shutdown
+R2(config-if)#exit
+
+-- Asignar IP a Interfaces
+R2(config)#interface gigabitEthernet 0/0
+R2(config-if)#ip address 192.168.1.254 255.255.255.0
+R2(config-if)#exit
+
+R2(config)#interface gigabitEthernet 0/1
+R2(config-if)#ip address 10.250.0.10 255.255.255.252
+R2(config-if)#exit
+
+R2(config)#interface gigabitEthernet 0/2
+R2(config-if)#ip address 10.250.0.18 255.255.255.252
+R2(config-if)#exit
+
+-- Asignar Rutas Estaticas
+R2(config)# ip route 10.74.15.0 255.255.255.0 10.250.0.9 
+R2(config)# ip route 10.74.15.0 255.255.255.0 10.250.0.17 2
+R2(config)#exit
+R2#write memory
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
